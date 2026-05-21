@@ -54,7 +54,7 @@ def step_copy_skill():
     skill_dir = _skill_dir()
     print(f"[2/4] Instalando skill en {skill_dir}...")
     skill_dir.mkdir(parents=True, exist_ok=True)
-    for name in ("odoo_cli.py", "skill.md", "mcp_server.py"):
+    for name in ("odoo_cli.py", "skill.md", "mcp_server.py", "projects.json"):
         src = REPO_DIR / name
         dst = skill_dir / ("SKILL.md" if name == "skill.md" else name)
         if src.exists():

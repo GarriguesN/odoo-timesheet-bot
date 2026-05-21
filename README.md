@@ -179,14 +179,17 @@ odoo-timesheet-bot/
 
 ## Como funciona
 
-El CLI (`odoo_cli.py`) se conecta a Odoo via JSON-RPC:
+El CLI (`odoo_cli.py`) opera en dos modos:
 
+**Búsqueda local (sin red)** — el comando `search` consulta `projects.json` (catálogo offline de proyectos y tareas). Es instantáneo y no requiere conexión a Odoo.
+
+**Operaciones contra Odoo (via JSON-RPC)**:
 1. Auto-detecta el nombre de la base de datos (via `/web/database/list` o fallback por login web)
 2. Autentica con las credenciales del `.env`
 3. Opera sobre `account.analytic.line` para crear/listar entradas
 4. Cachea el catalogo de proyectos en `projects_cache.json` (24h TTL)
 
-El skill (`skill.md`) le dice a OpenCode como usar el CLI: que datos extraer del mensaje del usuario, como hacer matching de proyectos/tareas, y el flujo de confirmacion antes de crear.
+El skill (`skill.md`) le dice a OpenCode como usar el CLI: que datos extraer del mensaje del usuario, como hacer matching de proyectos/tareas (primero atajos, luego búsqueda local, luego Odoo), y el flujo de confirmacion antes de crear.
 
 ## Licencia
 

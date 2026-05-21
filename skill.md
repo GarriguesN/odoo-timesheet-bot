@@ -55,9 +55,9 @@ Si las horas calculadas superan el máximo del día, avisa al usuario y sugiere 
 
 **Entradas existentes**: El usuario solo pide CREAR una nueva entrada. No preguntes si quiere reemplazar o modificar las anteriores.
 
-### Paso 2 — Matching de proyecto y tarea
+### Paso 2 — Matching de proyecto y tarea (orden de prioridad)
 
-**Atajos frecuentes** (úsalo directamente sin llamar a `list-projects`):
+**1. Atajos frecuentes** (úsalo directamente sin llamar a nada):
 - `[233] 2026-PROYECTOS INTERNOS` → internal, herramientas, Odoo, bugfix, investigación, configuración, CI/CD, deploy, infra
   - `[7263] Bugfixing` → arreglo de bugs
   - `[5425] Investigación` → exploración, spike, R&D
@@ -65,17 +65,17 @@ Si las horas calculadas superan el máximo del día, avisa al usuario y sugiere 
   - `[6221] Imputaciones` → partes de horas, registros de tiempo
   - `[5349] Configuración Odoo` → config Odoo
   - `[6386] Infraestructura` → servidores, infra
-  - `[6876] CSUC` →
 - `[152] 2025-MARKETING` → landing, marketing, contenido, deploy, web
   - `[6404] Landings` → páginas de aterrizaje, HTML/CSS/JS
   - `[1576] Producto` → producto, features
 
-Si el proyecto es ambiguo o no está en los atajos, busca localmente (sin llamar a Odoo):
+**2. Búsqueda local (SIN llamar a Odoo)** — si no hay atajo directo, busca en el catálogo local `projects.json`:
 ```
-$PYTHON $CLI search marketing
+$PYTHON $CLI search <keyword>
 ```
+Ejemplo: si el usuario dice "arreglando un bug en la landing", busca: `$PYTHON $CLI search landing`
 
-O actualiza el catálogo si hace falta:
+**3. Sincronización con Odoo** — solo si `search` no devuelve resultados o el usuario pide ver todos los proyectos:
 ```
 $PYTHON $CLI list-projects --refresh
 ```
@@ -116,6 +116,7 @@ El CLI ya muestra:
 
 | Acción | Comando |
 |---|---|
+| Buscar localmente | `$PYTHON $CLI search <keyword>` (sin red, instantáneo) |
 | Obtener catálogo | `$PYTHON $CLI list-projects` |
 | Forzar refresco | `$PYTHON $CLI list-projects --refresh` |
 | Ver horas de hoy | `$PYTHON $CLI list-timesheets --today` |
