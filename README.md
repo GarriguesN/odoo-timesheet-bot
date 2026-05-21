@@ -174,7 +174,6 @@ Si intentas imputar mas, muestra un error y no crea la entrada.
 odoo-timesheet-bot/
 ├── odoo_cli.py       # CLI autocontenido (sin dependencia MCP)
 ├── skill.md          # Instrucciones del skill para OpenCode
-├── projects.json     # Catálogo local de proyectos y tareas (búsqueda sin red)
 ├── install.py        # Instalador multiplataforma (Python)
 ├── install.sh        # Wrapper Mac/Linux
 ├── install.bat       # Wrapper Windows
@@ -187,7 +186,7 @@ odoo-timesheet-bot/
 
 El CLI (`odoo_cli.py`) opera en dos modos:
 
-**Búsqueda local (sin red)** — el comando `search` consulta `projects.json` (catálogo offline de proyectos y tareas). Es instantáneo y no requiere conexión a Odoo.
+**Búsqueda local (sin red)** — el comando `search` consulta `projects_cache.json` (catálogo offline descargado al instalar). Es instantáneo y no requiere conexión a Odoo.
 
 **Operaciones contra Odoo (via JSON-RPC)**:
 1. Auto-detecta el nombre de la base de datos (via `/web/database/list` o fallback por login web)

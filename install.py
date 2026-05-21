@@ -53,7 +53,7 @@ def step_venv(skill_dir, python_cmd):
 def step_copy_skill(skill_dir):
     print(f"[2/4] Copiando archivos del skill en {skill_dir}...")
     skill_dir.mkdir(parents=True, exist_ok=True)
-    for name in ("odoo_cli.py", "skill.md", "mcp_server.py", "projects.json"):
+    for name in ("odoo_cli.py", "skill.md", "mcp_server.py"):
         src = REPO_DIR / name
         dst = skill_dir / ("SKILL.md" if name == "skill.md" else name)
         if src.exists():
@@ -84,8 +84,25 @@ def step_env(skill_dir):
     print("    ✓ .env creado")
 
 
+def step_download_catalog(venv_python, skill_dir):
+    print("[4/5] Descargando catálogo de proyectos desde Odoo...")
+    cli_path = skill_dir / "odoo_cli.py"
+    try:
+        r = subprocess.run(
+            [str(venv_python), str(cli_path), "list-projects", "--refresh"],
+            capture_output=True, text=True, timeout=60, errors="replace",
+        )
+        if r.returncode == 0:
+            print("    ✓ Catálogo descargado (projects_cache.json)")
+        else:
+            print(f"    ⚠ No se pudo descargar el catálogo: {r.stderr.strip() or 'código ' + str(r.returncode)}")
+            print("    Revisa las credenciales en", skill_dir / ".env")
+    except Exception as e:
+        print(f"    ⚠ Error al descargar: {e}")
+
+
 def step_update_skill_md(skill_dir, venv_python):
-    print("[4/4] Actualizando rutas en SKILL.md...")
+    print("[5/5] Actualizando rutas en SKILL.md...")
     skill_md = skill_dir / "SKILL.md"
     content = skill_md.read_text(encoding="utf-8")
 
@@ -140,6 +157,7 @@ def main():
     venv_python = step_venv(skill_dir, python_cmd)
     step_copy_skill(skill_dir)
     step_env(skill_dir)
+    step_download_catalog(venv_python, skill_dir)
     step_update_skill_md(skill_dir, venv_python)
     step_verify(venv_python, skill_dir)
 

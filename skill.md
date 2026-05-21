@@ -69,7 +69,7 @@ Si las horas calculadas superan el máximo del día, avisa al usuario y sugiere 
   - `[6404] Landings` → páginas de aterrizaje, HTML/CSS/JS
   - `[1576] Producto` → producto, features
 
-**2. Búsqueda local (SIN llamar a Odoo)** — si no hay atajo directo, busca en el catálogo local `projects.json`:
+**2. Búsqueda local (SIN llamar a Odoo)** — si no hay atajo directo, busca en el catálogo local `projects_cache.json` (descargado automáticamente al instalar):
 ```
 $PYTHON $CLI search <keyword>
 ```
