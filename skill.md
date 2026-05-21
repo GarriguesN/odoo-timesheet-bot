@@ -11,11 +11,12 @@ Usa el CLI `odoo_cli.py` para todas las operaciones.
 ## Variables del CLI
 
 ```
-PYTHON=<ruta_al_venv>/bin/python3
-CLI=~/.config/opencode/skills/odoo-timesheet/odoo_cli.py
+PYTHON=<ruta_al_venv>/.venv/bin/python3
+CLI=<skill_dir>/odoo_cli.py
 ```
 
-> Estas variables se configuran automáticamente al ejecutar `install.sh`.
+> Estas variables se configuran automáticamente al ejecutar `install.py` (o `install.sh` / `install.bat`).
+> En Windows, PYTHON apunta a `.venv\Scripts\python.exe` y CLI a `%APPDATA%\opencode\skills\odoo-timesheet\odoo_cli.py`.
 
 ## Cuándo activar este skill
 

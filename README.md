@@ -12,25 +12,48 @@ Skill para [OpenCode](https://opencode.ai) que permite imputar horas en Odoo usa
 ## Requisitos
 
 - Python 3.10+
-- `requests` (`pip install requests`)
 - Cuenta en Odoo (next.edf.global)
 
 ## Instalacion
 
+### Mac / Linux
+
 ```bash
 git clone https://github.com/GarriguesN/odoo-timesheet-bot.git
 cd odoo-timesheet-bot
+python3 install.py
+```
+
+O usando el wrapper:
+
+```bash
 ./install.sh
 ```
 
-El script de instalacion:
+### Windows
+
+```powershell
+git clone https://github.com/GarriguesN/odoo-timesheet-bot.git
+cd odoo-timesheet-bot
+python install.py
+```
+
+O haciendo doble clic en `install.bat`.
+
+### Que hace el instalador
 
 1. Crea un venv e instala `requests`
-2. Copia `odoo_cli.py` y `skill.md` a `~/.config/opencode/skills/odoo-timesheet/`
-3. Crea `.env` a partir de `.env.example` (te pide las credenciales)
-4. Actualiza las rutas en `skill.md` para tu usuario
+2. Copia los archivos del skill al directorio de configuracion de OpenCode
+   - Mac/Linux: `~/.config/opencode/skills/odoo-timesheet/`
+   - Windows: `%APPDATA%\opencode\skills\odoo-timesheet\`
+3. Pide tus credenciales de Odoo y crea `.env`
+4. Actualiza las rutas en `SKILL.md` para tu sistema
+5. Verifica la conexion con Odoo
 
 ### Instalacion manual
+
+<details>
+<summary>Mac / Linux</summary>
 
 ```bash
 # 1. Crear venv
@@ -47,13 +70,42 @@ cp .env.example "$SKILL_DIR/.env"
 # Edita $SKILL_DIR/.env con tus credenciales de Odoo
 
 # 4. Actualizar ruta del venv en SKILL.md
-VENV_PATH="$(pwd)/.venv/bin/python3"
 sed -i '' "s|<ruta_al_venv>|$(pwd)|" "$SKILL_DIR/SKILL.md"
 ```
 
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```powershell
+# 1. Crear venv
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install requests
+
+# 2. Copiar skill
+$SKILL_DIR = "$env:APPDATA\opencode\skills\odoo-timesheet"
+New-Item -ItemType Directory -Force -Path $SKILL_DIR
+Copy-Item odoo_cli.py $SKILL_DIR\
+Copy-Item skill.md "$SKILL_DIR\SKILL.md"
+
+# 3. Configurar credenciales
+Copy-Item .env.example "$SKILL_DIR\.env"
+# Edita $SKILL_DIR\.env con tus credenciales de Odoo
+
+# 4. Actualizar ruta del venv en SKILL.md
+(Get-Content "$SKILL_DIR\SKILL.md") -replace '<ruta_al_venv>', $PWD.Path | Set-Content "$SKILL_DIR\SKILL.md"
+```
+
+</details>
+
 ## Configuracion
 
-Edita `~/.config/opencode/skills/odoo-timesheet/.env`:
+Edita el archivo `.env` en el directorio del skill:
+
+- Mac/Linux: `~/.config/opencode/skills/odoo-timesheet/.env`
+- Windows: `%APPDATA%\opencode\skills\odoo-timesheet\.env`
 
 ```env
 ODOO_URL=https://next.edf.global
@@ -67,8 +119,13 @@ ODOO_EMPLOYEE_ID=35
 ## Uso del CLI (independiente de OpenCode)
 
 ```bash
-PYTHON=~/.venv/bin/python3
+# Mac / Linux
+PYTHON=./.venv/bin/python3
 CLI=~/.config/opencode/skills/odoo-timesheet/odoo_cli.py
+
+# Windows
+set PYTHON=.venv\Scripts\python.exe
+set CLI=%APPDATA%\opencode\skills\odoo-timesheet\odoo_cli.py
 
 # Listar proyectos y tareas
 $PYTHON $CLI list-projects
@@ -92,7 +149,7 @@ Una vez instalado el skill, simplemente escribe en OpenCode:
 | "hoy he estado 3h con el bug de la landing" | Imputa 3h en MARKETING/Landings |
 | "imputar desde las 9 hasta las 11:30 configurando Odoo" | Calcula 2.5h, imputa en PROYECTOS INTERNOS/Configuracion |
 | "¿cuántas horas llevo hoy?" | Lista las entradas del dia |
-| "ayer 1h en reunión de marketing" | Imputa 1h en MARKETING/Reuniones, fecha de ayer |
+| "ayer 1h en reunion de marketing" | Imputa 1h en MARKETING/Reuniones, fecha de ayer |
 
 ## Maximo de horas por dia
 
@@ -111,8 +168,10 @@ Si intentas imputar mas, muestra un error y no crea la entrada.
 odoo-timesheet-bot/
 ├── odoo_cli.py       # CLI autocontenido (sin dependencia MCP)
 ├── skill.md          # Instrucciones del skill para OpenCode
+├── install.py        # Instalador multiplataforma (Python)
+├── install.sh        # Wrapper Mac/Linux
+├── install.bat       # Wrapper Windows
 ├── .env.example      # Plantilla de credenciales
-├── install.sh        # Script de instalacion
 ├── mcp_server.py     # Servidor MCP (alternativa, requiere `pip install mcp`)
 └── README.md
 ```
