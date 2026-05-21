@@ -42,13 +42,13 @@ O haciendo doble clic en `install.bat`.
 
 ### Que hace el instalador
 
-1. Crea un venv e instala `requests`
-2. Copia los archivos del skill al directorio de configuracion de OpenCode
-   - Mac/Linux: `~/.config/opencode/skills/odoo-timesheet/`
-   - Windows: `C:\Users\<tu_usuario>\.config\opencode\skills\odoo-timesheet\`
+1. Crea un venv en el directorio del skill e instala `requests`
+2. Copia los archivos del skill (`odoo_cli.py`, `skill.md`, `projects.json`, `mcp_server.py`) a `~/.config/opencode/skills/odoo-timesheet/` (o `C:\Users\<tu_usuario>\.config\...` en Windows)
 3. Pide tus credenciales de Odoo y crea `.env`
-4. Actualiza las rutas en `SKILL.md` para tu sistema
+4. Actualiza las rutas en `SKILL.md`
 5. Verifica la conexion con Odoo
+
+> **Puedes borrar el repo clonado** tras la instalacion. Todo queda en el directorio del skill.
 
 ### Instalacion manual
 
@@ -56,21 +56,25 @@ O haciendo doble clic en `install.bat`.
 <summary>Mac / Linux</summary>
 
 ```bash
-# 1. Crear venv
-python3 -m venv .venv && source .venv/bin/activate && pip install requests
-
-# 2. Copiar skill
 SKILL_DIR=~/.config/opencode/skills/odoo-timesheet
 mkdir -p "$SKILL_DIR"
+
+# 1. Crear venv en el skill dir
+python3 -m venv "$SKILL_DIR/.venv"
+source "$SKILL_DIR/.venv/bin/activate"
+pip install requests
+
+# 2. Copiar archivos
 cp odoo_cli.py "$SKILL_DIR/"
 cp skill.md "$SKILL_DIR/SKILL.md"
+cp projects.json "$SKILL_DIR/"
 
 # 3. Configurar credenciales
 cp .env.example "$SKILL_DIR/.env"
 # Edita $SKILL_DIR/.env con tus credenciales de Odoo
 
-# 4. Actualizar ruta del venv en SKILL.md
-sed -i '' "s|<ruta_al_venv>|$(pwd)|" "$SKILL_DIR/SKILL.md"
+# 4. Actualizar rutas en SKILL.md
+sed -i '' "s|<ruta_al_venv>|$SKILL_DIR|" "$SKILL_DIR/SKILL.md"
 ```
 
 </details>
@@ -79,23 +83,25 @@ sed -i '' "s|<ruta_al_venv>|$(pwd)|" "$SKILL_DIR/SKILL.md"
 <summary>Windows</summary>
 
 ```powershell
-# 1. Crear venv
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install requests
-
-# 2. Copiar skill
 $SKILL_DIR = "$env:USERPROFILE\.config\opencode\skills\odoo-timesheet"
 New-Item -ItemType Directory -Force -Path $SKILL_DIR
+
+# 1. Crear venv en el skill dir
+python -m venv "$SKILL_DIR\.venv"
+& "$SKILL_DIR\.venv\Scripts\activate"
+pip install requests
+
+# 2. Copiar archivos
 Copy-Item odoo_cli.py $SKILL_DIR\
 Copy-Item skill.md "$SKILL_DIR\SKILL.md"
+Copy-Item projects.json $SKILL_DIR\
 
 # 3. Configurar credenciales
 Copy-Item .env.example "$SKILL_DIR\.env"
 # Edita $SKILL_DIR\.env con tus credenciales de Odoo
 
-# 4. Actualizar ruta del venv en SKILL.md
-(Get-Content "$SKILL_DIR\SKILL.md") -replace '<ruta_al_venv>', $PWD.Path | Set-Content "$SKILL_DIR\SKILL.md"
+# 4. Actualizar rutas en SKILL.md
+(Get-Content "$SKILL_DIR\SKILL.md") -replace '<ruta_al_venv>', $SKILL_DIR | Set-Content "$SKILL_DIR\SKILL.md"
 ```
 
 </details>
@@ -117,11 +123,11 @@ ODOO_EMPLOYEE_ID=35
 
 ```bash
 # Mac / Linux
-PYTHON=./.venv/bin/python3
+PYTHON=~/.config/opencode/skills/odoo-timesheet/.venv/bin/python3
 CLI=~/.config/opencode/skills/odoo-timesheet/odoo_cli.py
 
 # Windows
-PYTHON=.venv\Scripts\python.exe
+PYTHON=%USERPROFILE%\.config\opencode\skills\odoo-timesheet\.venv\Scripts\python.exe
 CLI=%USERPROFILE%\.config\opencode\skills\odoo-timesheet\odoo_cli.py
 
 # Listar proyectos y tareas
@@ -190,6 +196,8 @@ El CLI (`odoo_cli.py`) opera en dos modos:
 4. Cachea el catalogo de proyectos en `projects_cache.json` (24h TTL)
 
 El skill (`skill.md`) le dice a OpenCode como usar el CLI: que datos extraer del mensaje del usuario, como hacer matching de proyectos/tareas (primero atajos, luego búsqueda local, luego Odoo), y el flujo de confirmacion antes de crear.
+
+> Todo el runtime (venv, scripts, catálogo) se instala en `~/.config/opencode/skills/odoo-timesheet/`. El repo clonado solo sirve para distribuir los archivos y puedes borrarlo tras la instalación.
 
 ## Licencia
 
