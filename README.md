@@ -18,7 +18,7 @@ Skill para [OpenCode](https://opencode.ai) que permite imputar horas en Odoo usa
 ## Instalacion
 
 ```bash
-git clone https://github.com/<tu-org>/odoo-timesheet-bot.git
+git clone https://github.com/GarriguesN/odoo-timesheet-bot.git
 cd odoo-timesheet-bot
 ./install.sh
 ```
