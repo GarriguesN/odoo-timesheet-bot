@@ -1,6 +1,6 @@
 # Odoo Timesheet Bot — OpenCode Skill
 
-Skill para [OpenCode](https://opencode.ai) que permite imputar horas en Odoo usando lenguaje natural. Diseñado para el equipo de EDF (next.edf.global).
+Skill para [OpenCode](https://opencode.ai) que permite imputar horas en Odoo usando lenguaje natural. Diseñado para el equipo de EDF.
 
 ## Que hace
 
