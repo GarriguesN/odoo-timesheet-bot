@@ -308,12 +308,44 @@ def cmd_create(args):
     )
 
 
+def cmd_search(args):
+    query = args.query.lower()
+    catalog_path = SCRIPT_DIR / "projects.json"
+    if not catalog_path.exists():
+        print("Error: no se encontró projects.json. Ejecuta 'list-projects --refresh' primero.", file=sys.stderr)
+        sys.exit(1)
+    catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
+    matches = []
+    for proj in catalog:
+        if query in proj["name"].lower():
+            matches.append(proj)
+        else:
+            for task in proj.get("tasks", []):
+                if query in task["name"].lower():
+                    matches.append({"id": proj["id"], "name": proj["name"], "task": task})
+                    break
+    if not matches:
+        print("No se encontraron coincidencias.")
+        return
+    print(f"{len(matches)} coincidencia(s):\n")
+    for m in matches:
+        if "task" in m:
+            print(f"  [{m['id']}] {m['name']}  →  [{m['task']['id']}] {m['task']['name']}")
+        else:
+            tasks = ", ".join(f"[{t['id']}] {t['name']}" for t in m.get("tasks", []))
+            print(f"  [{m['id']}] {m['name']}")
+            print(f"      Tareas: {tasks}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Odoo Timesheet CLI")
     sub = parser.add_subparsers(dest="command")
 
     p_projects = sub.add_parser("list-projects", help="Listar proyectos y tareas")
     p_projects.add_argument("--refresh", action="store_true", help="Forzar actualización de caché")
+
+    p_search = sub.add_parser("search", help="Buscar proyecto/tarea localmente en projects.json")
+    p_search.add_argument("query", help="Texto a buscar")
 
     p_ts = sub.add_parser("list-timesheets", help="Listar entradas de horas")
     p_ts.add_argument("--from", dest="date_from", default="", help="Fecha inicio YYYY-MM-DD")
@@ -331,6 +363,8 @@ def main():
     args = parser.parse_args()
     if args.command == "list-projects":
         cmd_list_projects(args)
+    elif args.command == "search":
+        cmd_search(args)
     elif args.command == "list-timesheets":
         cmd_list_timesheets(args)
     elif args.command == "create":

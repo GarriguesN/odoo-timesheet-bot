@@ -127,6 +127,9 @@ CLI=%USERPROFILE%\.config\opencode\skills\odoo-timesheet\odoo_cli.py
 # Listar proyectos y tareas
 $PYTHON $CLI list-projects
 
+# Buscar localmente (sin llamar a Odoo)
+$PYTHON $CLI search marketing
+
 # Ver horas de hoy
 $PYTHON $CLI list-timesheets --today
 
@@ -165,6 +168,7 @@ Si intentas imputar mas, muestra un error y no crea la entrada.
 odoo-timesheet-bot/
 ├── odoo_cli.py       # CLI autocontenido (sin dependencia MCP)
 ├── skill.md          # Instrucciones del skill para OpenCode
+├── projects.json     # Catálogo local de proyectos y tareas (búsqueda sin red)
 ├── install.py        # Instalador multiplataforma (Python)
 ├── install.sh        # Wrapper Mac/Linux
 ├── install.bat       # Wrapper Windows

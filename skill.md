@@ -70,9 +70,14 @@ Si las horas calculadas superan el máximo del día, avisa al usuario y sugiere 
   - `[6404] Landings` → páginas de aterrizaje, HTML/CSS/JS
   - `[1576] Producto` → producto, features
 
-Si el proyecto es ambiguo o no está en los atajos, ejecuta:
+Si el proyecto es ambiguo o no está en los atajos, busca localmente (sin llamar a Odoo):
 ```
-$PYTHON $CLI list-projects
+$PYTHON $CLI search marketing
+```
+
+O actualiza el catálogo si hace falta:
+```
+$PYTHON $CLI list-projects --refresh
 ```
 
 ### Paso 3 — Mostrar confirmación antes de crear
