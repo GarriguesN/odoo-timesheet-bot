@@ -70,7 +70,7 @@ def step_copy_skill():
 def step_env(skill_dir):
     env_path = skill_dir / ".env"
     if env_path.exists():
-        print(f"[3/4] .env ya existe en {env_path} — saltando")
+        print("[3/4] .env ya existe — saltando")
         return
 
     print("[3/4] Configurando credenciales...")
@@ -84,15 +84,16 @@ def step_env(skill_dir):
         f"ODOO_URL=https://next.edf.global\n"
         f"ODOO_USER={user}\n"
         f"ODOO_PASSWORD={password}\n"
-        f"ODOO_EMPLOYEE_ID={employee_id}\n"
+        f"ODOO_EMPLOYEE_ID={employee_id}\n",
+        encoding="utf-8",
     )
-    print(f"    ✓ .env creado en {env_path}")
+    print(f"    ✓ .env creado")
 
 
 def step_update_skill_md(skill_dir, venv_python):
     print("[4/4] Actualizando rutas en SKILL.md...")
     skill_md = skill_dir / "SKILL.md"
-    content = skill_md.read_text()
+    content = skill_md.read_text(encoding="utf-8")
 
     content = content.replace("<ruta_al_venv>", str(REPO_DIR))
 
@@ -116,7 +117,7 @@ def step_update_skill_md(skill_dir, venv_python):
             + content[second_line_end:]
         )
 
-    skill_md.write_text(content)
+    skill_md.write_text(content, encoding="utf-8")
     print(f"    ✓ PYTHON={venv_python}")
 
 
@@ -127,7 +128,7 @@ def step_verify(venv_python, skill_dir):
     try:
         r = subprocess.run(
             [str(venv_python), str(cli_path), "list-projects"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True, text=True, timeout=30, encoding="utf-8",
         )
         if r.returncode == 0:
             lines = r.stdout.strip().split("\n")
