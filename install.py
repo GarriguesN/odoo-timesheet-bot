@@ -128,13 +128,13 @@ def step_verify(venv_python, skill_dir):
     try:
         r = subprocess.run(
             [str(venv_python), str(cli_path), "list-projects"],
-            capture_output=True, text=True, timeout=30, encoding="utf-8",
+            capture_output=True, text=True, timeout=30, errors="replace",
         )
         if r.returncode == 0:
             lines = r.stdout.strip().split("\n")
             print(f"    ✓ Conexion OK — {lines[0] if lines else 'sin proyectos'}")
         else:
-            print(f"    ⚠ Error de conexion: {r.stderr.strip()}")
+            print(f"    ⚠ Error de conexion: {r.stderr.strip() or 'codigo ' + str(r.returncode)}")
             print("    Revisa las credenciales en", skill_dir / ".env")
     except Exception as e:
         print(f"    ⚠ No se pudo verificar: {e}")
