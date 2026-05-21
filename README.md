@@ -57,7 +57,7 @@ Edita `~/.config/opencode/skills/odoo-timesheet/.env`:
 
 ```env
 ODOO_URL=https://next.edf.global
-ODOO_USER=tu_email@entornosdeformacion.com
+ODOO_USER=tu_email@email.com
 ODOO_PASSWORD=tu_contraseña
 ODOO_EMPLOYEE_ID=35
 ```
