@@ -45,7 +45,7 @@ O haciendo doble clic en `install.bat`.
 1. Crea un venv e instala `requests`
 2. Copia los archivos del skill al directorio de configuracion de OpenCode
    - Mac/Linux: `~/.config/opencode/skills/odoo-timesheet/`
-   - Windows: `%APPDATA%\opencode\skills\odoo-timesheet\`
+   - Windows: `C:\Users\<tu_usuario>\.config\opencode\skills\odoo-timesheet\`
 3. Pide tus credenciales de Odoo y crea `.env`
 4. Actualiza las rutas en `SKILL.md` para tu sistema
 5. Verifica la conexion con Odoo
@@ -85,7 +85,7 @@ python -m venv .venv
 pip install requests
 
 # 2. Copiar skill
-$SKILL_DIR = "$env:APPDATA\opencode\skills\odoo-timesheet"
+$SKILL_DIR = "$env:USERPROFILE\.config\opencode\skills\odoo-timesheet"
 New-Item -ItemType Directory -Force -Path $SKILL_DIR
 Copy-Item odoo_cli.py $SKILL_DIR\
 Copy-Item skill.md "$SKILL_DIR\SKILL.md"
@@ -102,10 +102,7 @@ Copy-Item .env.example "$SKILL_DIR\.env"
 
 ## Configuracion
 
-Edita el archivo `.env` en el directorio del skill:
-
-- Mac/Linux: `~/.config/opencode/skills/odoo-timesheet/.env`
-- Windows: `%APPDATA%\opencode\skills\odoo-timesheet\.env`
+Edita el archivo `.env` en el directorio del skill (`~/.config/opencode/skills/odoo-timesheet/.env`):
 
 ```env
 ODOO_URL=https://next.edf.global
@@ -124,8 +121,8 @@ PYTHON=./.venv/bin/python3
 CLI=~/.config/opencode/skills/odoo-timesheet/odoo_cli.py
 
 # Windows
-set PYTHON=.venv\Scripts\python.exe
-set CLI=%APPDATA%\opencode\skills\odoo-timesheet\odoo_cli.py
+PYTHON=.venv\Scripts\python.exe
+CLI=%USERPROFILE%\.config\opencode\skills\odoo-timesheet\odoo_cli.py
 
 # Listar proyectos y tareas
 $PYTHON $CLI list-projects

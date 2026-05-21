@@ -18,11 +18,7 @@ REPO_DIR = Path(__file__).resolve().parent
 
 
 def _skill_dir():
-    if sys.platform == "win32":
-        base = Path(os.environ.get("APPDATA", Path.home() / "AppData" / "Roaming"))
-    else:
-        base = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-    return base / "opencode" / "skills" / "odoo-timesheet"
+    return Path.home() / ".config" / "opencode" / "skills" / "odoo-timesheet"
 
 
 def _venv_python():
