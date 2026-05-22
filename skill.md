@@ -1,12 +1,13 @@
 ---
 name: odoo-timesheet
-description: "Gestión de partes de horas en Odoo (next.edf.global) mediante lenguaje natural. Permite imputar horas, listar entradas y consultar proyectos/tareas. Acciones: imputar, listar horas, listar proyectos, crear entrada. Triggers: 'hoy he estado', 'imputar horas', 'parte de horas', 'cuántas horas', 'registrar tiempo'."
+description: "Gestión de partes de horas en Odoo (next.edf.global) mediante lenguaje natural. Acciones: imputar horas, ver entradas, listar proyectos. Triggers: 'hoy he estado', 'hay que imputar', 'imputar horas', 'parte de horas', 'cuántas horas', 'registrar tiempo', 'tengo imputado', 'horas de ayer/hoy'."
 ---
 
 # Odoo Timesheet — Guía de uso
 
-Skill para interactuar con el sistema de partes de horas de Odoo en next.edf.global.
-Usa el CLI `odoo_cli.py` para todas las operaciones.
+Skill para imputar y consultar partes de horas en Odoo.
+
+**No uses herramientas MCP. Usa siempre el CLI de Python:**
 
 ## Variables del CLI
 

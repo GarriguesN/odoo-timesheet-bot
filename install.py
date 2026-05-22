@@ -36,8 +36,47 @@ def _find_python():
     sys.exit(1)
 
 
+def _detect_db(user, password, venv_python):
+    """Intenta detectar el nombre de la BD de Odoo y devolverlo como string."""
+    script = (
+        "import os,sys,re,requests\n"
+        "url='https://next.edf.global'\n"
+        "user=os.environ['U']\n"
+        "pw=os.environ['P']\n"
+        # Intento 1: /web/database/list
+        "try:\n"
+        "    r=requests.post(url+'/web/database/list',json={'jsonrpc':'2.0','method':'call','id':1,'params':{}},headers={'Content-Type':'application/json'},timeout=10)\n"
+        "    dbs=r.json().get('result',[])\n"
+        "    if isinstance(dbs,list) and dbs: print(dbs[0]);sys.exit(0)\n"
+        "except Exception: pass\n"
+        # Intento 2: web login + session info
+        "try:\n"
+        "    s=requests.Session()\n"
+        "    page=s.get(url+'/web/login',timeout=10)\n"
+        "    m=re.search(r'csrf_token:\\s*\"([^\"]+)\"',page.text)\n"
+        "    csrf=m.group(1) if m else ''\n"
+        "    s.post(url+'/web/login',data={'csrf_token':csrf,'login':user,'password':pw},timeout=10,allow_redirects=False)\n"
+        "    info=s.post(url+'/web/session/get_session_info',json={'jsonrpc':'2.0','method':'call','id':2,'params':{}},headers={'Content-Type':'application/json'},timeout=10)\n"
+        "    db=info.json().get('result',{}).get('db','')\n"
+        "    if db: print(db);sys.exit(0)\n"
+        "except Exception: pass\n"
+        "sys.exit(1)\n"
+    )
+    try:
+        r = subprocess.run(
+            [str(venv_python), "-c", script],
+            capture_output=True, text=True, timeout=20,
+            env={**os.environ, "U": user, "P": password},
+        )
+        if r.returncode == 0:
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return ""
+
+
 def step_venv(skill_dir, python_cmd):
-    print("[1/4] Creando virtualenv...")
+    print("[1/5] Creando virtualenv...")
     venv_dir = skill_dir / ".venv"
     if not venv_dir.exists():
         subprocess.run([python_cmd, "-m", "venv", str(venv_dir)], check=True)
@@ -51,7 +90,7 @@ def step_venv(skill_dir, python_cmd):
 
 
 def step_copy_skill(skill_dir):
-    print(f"[2/4] Copiando archivos del skill en {skill_dir}...")
+    print(f"[2/5] Copiando archivos del skill en {skill_dir}...")
     skill_dir.mkdir(parents=True, exist_ok=True)
     for name in ("odoo_cli.py", "skill.md", "mcp_server.py"):
         src = REPO_DIR / name
@@ -61,26 +100,34 @@ def step_copy_skill(skill_dir):
     print("    ✓ Archivos copiados")
 
 
-def step_env(skill_dir):
+def step_env(skill_dir, venv_python):
     env_path = skill_dir / ".env"
     if env_path.exists():
-        print("[3/4] .env ya existe — saltando")
+        print("[3/5] .env ya existe — saltando")
         return
 
-    print("[3/4] Configurando credenciales...")
+    print("[3/5] Configurando credenciales...")
     print()
     print("    Introduce tus datos de Odoo (next.edf.global):")
     user = input("    Email: ").strip()
     password = getpass.getpass("    Contraseña: ").strip()
     employee_id = input("    Employee ID (número, míralo en tu perfil de Odoo): ").strip()
 
-    env_path.write_text(
-        f"ODOO_URL=https://next.edf.global\n"
-        f"ODOO_USER={user}\n"
-        f"ODOO_PASSWORD={password}\n"
+    print("    Detectando base de datos de Odoo...", end=" ", flush=True)
+    db = _detect_db(user, password, venv_python)
+    if db:
+        print(f"✓ ({db})")
+    else:
+        print("no detectada (se intentará en el primer uso)")
+
+    lines = [
+        "ODOO_URL=https://next.edf.global\n",
+        f"ODOO_DB={db}\n" if db else "",
+        f"ODOO_USER={user}\n",
+        f"ODOO_PASSWORD={password}\n",
         f"ODOO_EMPLOYEE_ID={employee_id}\n",
-        encoding="utf-8",
-    )
+    ]
+    env_path.write_text("".join(lines), encoding="utf-8")
     print("    ✓ .env creado")
 
 
@@ -156,7 +203,7 @@ def main():
     skill_dir = _skill_dir()
     venv_python = step_venv(skill_dir, python_cmd)
     step_copy_skill(skill_dir)
-    step_env(skill_dir)
+    step_env(skill_dir, venv_python)
     step_download_catalog(venv_python, skill_dir)
     step_update_skill_md(skill_dir, venv_python)
     step_verify(venv_python, skill_dir)
